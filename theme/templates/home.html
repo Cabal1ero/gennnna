@@ -44,7 +44,7 @@
       <h2 class="card-title text-xl">{{ model }}</h2>
       <div class="text-lg text-primary mb-4">от {{ model.base_price|floatformat:0 }} ₽</div>
       <div class="card-actions justify-end">
-      <a href="{% url 'autosalon:car_detail' model.slug %}" class="btn btn-primary btn-block text-sm sm:text-lg">Посмотреть обзор</a>
+      <a href="{% url 'car:car_detail' model.slug %}" class="btn btn-primary btn-block text-sm sm:text-lg">Посмотреть обзор</a>
       </div>
       </div>
       </div>

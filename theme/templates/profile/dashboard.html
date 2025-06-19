@@ -435,92 +435,140 @@
           
           <!-- Список заявок -->
           <div class="space-y-4">
-            <!-- -->
             {% if service_requests %}
-            {% for service_request in service_requests %}
-            <div class="card bg-base-100 border border-base-300 hover:border-primary transition-all">
-              <div class="card-body p-5">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <h3 class="card-title text-lg">{{ service_request.get_service_type_display }}</h3>
-                    <p class="text-base-content/70 text-sm">{{ service_request.car_model }}</p>
-                  </div>
-                  <div class="badge {% if service_request.status == 'new' or service_request.status == 'confirmed' %}badge-primary{% elif service_request.status == 'completed' %}badge-success{% elif service_request.status == 'cancelled' %}badge-error{% endif %}">
-                    {{ service_request.get_status_display }}
-                  </div>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
-                  <div class="flex items-center gap-2">
-                    <span class="icon-[tabler--calendar] size-5 text-base-content/70"></span>
-                    <div>
-                      <div class="text-xs text-base-content/70">Дата записи</div>
-                      <div class="font-medium">{{ service_request.service_date|date:"d.m.Y" }}</div>
-                    </div>
-                  </div>
-                  
-                  <div class="flex items-center gap-2">
-                    <span class="icon-[tabler--clock] size-5 text-base-content/70"></span>
-                    <div>
-                      <div class="text-xs text-base-content/70">Время</div>
-                      <div class="font-medium">{{ service_request.created_at|time:"H:i" }}</div>
-                    </div>
-                  </div>
-                  
-                  <div class="flex items-center gap-2">
-                    <span class="icon-[tabler--map-pin] size-5 text-base-content/70"></span>
-                    <div>
-                      <div class="text-xs text-base-content/70">Сервисный центр</div>
-                      <div class="font-medium">Таганрог, ул. Инициативная, 48</div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="flex flex-wrap gap-2 mb-4">
-                  <span>
-                    {{ service_request.comments }}
-                  </span>
-                </div>
-                
-                <div class="card-actions justify-end">
-                  {% if service_request.status == 'new' or service_request.status == 'confirmed' %}
-                  <form method="post" action="{% url 'service:cancel_service' service_request.id %}">
-                      {% csrf_token %}
-                      <button type="submit" class="btn btn-sm btn-outline btn-error">Отменить</button>
-                  </form>
-                  {% endif %}
-                </div>
-              </div>
+              {% for service_request in service_requests %}
+<div class="card bg-base-100 border border-base-300 hover:border-primary transition-all">
+    <div class="card-body p-5">
+        <div class="flex justify-between items-start">
+            <div>
+                <h3 class="card-title text-lg">{{ service_request.get_service_type_display }}</h3>
+                <p class="text-base-content/70 text-sm">{{ service_request.car_model }}</p>
             </div>
-            {% endfor %}
-           
-            
-         
-         
-          </div>
-          {% else %}
-          <!-- Если нет заявок -->
-          <div class="hidden text-center py-12">
-            <div class="flex justify-center mb-4">
-              <span class="icon-[tabler--tool-off] size-16 text-base-content/30"></span>
+            <div class="badge {% if service_request.status == 'new' or service_request.status == 'confirmed' %}badge-primary{% elif service_request.status == 'completed' %}badge-success{% elif service_request.status == 'cancelled' %}badge-error{% endif %}">
+                {{ service_request.get_status_display }}
             </div>
-            <h3 class="text-xl font-bold mb-2">У вас пока нет сервисных заявок</h3>
-            <p class="text-base-content/70 mb-6 max-w-md mx-auto">
-              Запишитесь на техническое обслуживание или ремонт вашего автомобиля в нашем сервисном центре.
-            </p>
-            <button class="btn btn-primary gap-2" onclick="document.getElementById('new-service-modal').showModal()">
-              <span class="icon-[tabler--plus] size-5"></span>
-              Создать заявку
-            </button>
-          </div>
-          {% endif %}
-          <!-- Пагинация -->
-          
         </div>
-      
-  
-      
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
+            <div class="flex items-center gap-2">
+                <span class="icon-[tabler--calendar] size-5 text-base-content/70"></span>
+                <div>
+                    <div class="text-xs text-base-content/70">Дата записи</div>
+                    <div class="font-medium">{{ service_request.service_date|date:"d.m.Y" }}</div>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <span class="icon-[tabler--clock] size-5 text-base-content/70"></span>
+                <div>
+                    <div class="text-xs text-base-content/70">Время записи</div>
+                    <div class="font-medium">{{ service_request.service_time|default:"Не указано" }}</div>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <span class="icon-[tabler--map-pin] size-5 text-base-content/70"></span>
+                <div>
+                    <div class="text-xs text-base-content/70">Сервисный центр</div>
+                    <div class="font-medium">Таганрог, ул. Инициативная, 48</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Дополнительная информация -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="flex items-center gap-2">
+                <span class="icon-[tabler--phone] size-5 text-base-content/70"></span>
+                <div>
+                    <div class="text-xs text-base-content/70">Телефон</div>
+                    <div class="font-medium">{{ service_request.phone }}</div>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <span class="icon-[tabler--calendar-plus] size-5 text-base-content/70"></span>
+                <div>
+                    <div class="text-xs text-base-content/70">Дата создания</div>
+                    <div class="font-medium">{{ service_request.created_at|date:"d.m.Y H:i" }}</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Комментарии -->
+        {% if service_request.comments %}
+        <div class="bg-base-200 rounded-lg p-3 mb-4">
+            <div class="text-xs text-base-content/70 mb-1">Комментарии:</div>
+            <div class="text-sm">{{ service_request.comments }}</div>
+        </div>
+        {% endif %}
+        
+        <!-- Статус информация -->
+        {% if service_request.status == 'confirmed' %}
+        
+        {% elif service_request.status == 'new' %}
+        <div class="alert alert-info mb-4">
+            <span class="icon-[tabler--clock] size-5"></span>
+            <div>
+                <div class="font-medium">Заявка на рассмотрении</div>
+                <div class="text-sm">Мы свяжемся с вами для подтверждения записи</div>
+            </div>
+        </div>
+        {% elif service_request.status == 'completed' %}
+        <div class="alert alert-success mb-4">
+            <span class="icon-[tabler--check-circle] size-5"></span>
+            <div>
+                <div class="font-medium">Обслуживание завершено</div>
+                <div class="text-sm">Спасибо за обращение в наш сервисный центр!</div>
+            </div>
+        </div>
+        {% elif service_request.status == 'cancelled' %}
+        <div class="alert alert-error mb-4">
+            <span class="icon-[tabler--x-circle] size-5"></span>
+            <div>
+                <div class="font-medium">Заявка отменена</div>
+                <div class="text-sm">Заявка была отменена</div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="card-actions justify-end">
+            {% if service_request.status == 'new' or service_request.status == 'confirmed' %}
+            <form method="post" action="{% url 'service:cancel_service' service_request.id %}" 
+                  onsubmit="return confirm('Вы уверены, что хотите отменить заявку на {{ service_request.service_date|date:"d.m.Y" }} в {{ service_request.service_time }}?')">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline btn-error gap-2">
+                    <span class="icon-[tabler--x] size-4"></span>
+                    Отменить
+                </button>
+            </form>
+            {% endif %}
+            
+            {% if service_request.status == 'cancelled' %}
+            <a href="{% url 'service:service_center' %}" class="btn btn-sm btn-primary gap-2">
+                <span class="icon-[tabler--plus] size-4"></span>
+                Записаться снова
+            </a>
+            {% endif %}
+        </div>
     </div>
+</div>
+              {% endfor %}
+            {% else %}
+<div class="text-center py-12">
+    <div class="mb-4">
+        <span class="icon-[tabler--calendar-x] size-16 text-base-content/30"></span>
+    </div>
+    <h3 class="text-xl font-semibold mb-2">Нет заявок на сервис</h3>
+    <p class="text-base-content/70 mb-6">У вас пока нет заявок на сервисное обслуживание</p>
+    <a href="{% url 'service:service_center' %}" class="btn btn-primary gap-2">
+        <span class="icon-[tabler--calendar-plus] size-5"></span>
+        Записаться на сервис
+    </a>
+</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

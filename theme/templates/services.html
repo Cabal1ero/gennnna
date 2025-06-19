@@ -342,9 +342,9 @@
             <div class="text-2xl font-bold text-primary mb-4">{{ car.price|floatformat:0 }} ₽</div>
             <div class="card-actions justify-end">
               {% if user.is_authenticated %}
-              <a href="{% url 'autosalon:order_car' car.id %}" class="btn btn-primary btn-block">Приобрести</a>
+              <a href="{% url 'order:order_car' car.id %}" class="btn btn-primary btn-block">Приобрести</a>
               {% else %}
-              <a href="{% url 'autosalon:auth' %}?next={{ request.path }}" class="btn btn-primary btn-block">Приобрести</a>
+              <a href="{% url 'accounts:auth' %}?next={{ request.path }}" class="btn btn-primary btn-block">Приобрести</a>
               {% endif %}
             </div>
           </div>

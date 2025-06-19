@@ -10,263 +10,744 @@
 
 <!-- Заголовок и подзаголовок -->
 <div class="mb-6">
-  <h1 class="text-4xl font-bold text-gray-900">{{ car_model.brand.name }} {{ car_model.name }}</h1>
-  <p class="text-gray-500 mt-1">{% if available_cars %}Доступно сейчас{% else %}Под заказ{% endif %}</p>
+    <h1 class="text-4xl font-bold text-gray-900" id="car-title">{{ car_model.brand.name }} {{ car_model.name }}</h1>
+    <p class="text-gray-500 mt-1" id="car-subtitle">{% if available_cars %}Доступно сейчас{% else %}Под заказ{% endif %}</p>
 </div>
 
 <!-- Навигационные вкладки -->
 <div class="border-b border-gray-200 mb-8">
-  <nav class="flex space-x-8">
-    <button class="tab tab-lg tab-active" id="overview-tab" onclick="switchTab('overview')">Обзор</button>
-    <button class="tab tab-lg" id="specs-tab" onclick="switchTab('specs')">Спецификации</button>
-    <button class="tab tab-lg" id="photos-tab" onclick="switchTab('photos')">Фотографии</button>
-  </nav>
+    <nav class="flex space-x-8">
+      <button class="tab tab-lg tab-active" id="overview-tab" onclick="switchTab('overview')">Обзор</button>
+      <button class="tab tab-lg" id="specs-tab" onclick="switchTab('specs')">Спецификации</button>
+      <button class="tab tab-lg" id="photos-tab" onclick="switchTab('photos')">Фотографии</button>
+    </nav>
 </div>
 
 <div id="overview-content" class="tab-content">
-  <!-- Галерея изображений -->
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-    <!-- Основное изображение модели -->
-    <div class="rounded-lg overflow-hidden">
-      {% if car_model.image %}
-      <img src="{{ car_model.image.url }}" alt="{{ car_model.brand.name }} {{ car_model.name }}" class="w-full h-auto object-cover">
-      {% else %}
-      <img src="https://placehold.co/600x400/red/white?text={{ car_model.brand.name }}+{{ car_model.name }}" alt="{{ car_model.brand.name }} {{ car_model.name }}" class="w-full h-auto object-cover">
-      {% endif %}
-    </div>
+    <!-- Галерея изображений -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10" id="image-gallery">
+      <!-- Основное изображение модели -->
+      <div class="rounded-lg overflow-hidden">
+        <img id="main-image" src="{% if car_model.image %}{{ car_model.image.url }}{% else %}https://placehold.co/600x400/blue/white?text={{ car_model.brand.name }}+{{ car_model.name }}{% endif %}" alt="{{ car_model.brand.name }} {{ car_model.name }}" class="w-full h-auto object-cover">
+      </div>
     
-    <!-- Дополнительные изображения (заглушки или из галереи) -->
-    <div class="rounded-lg overflow-hidden">
-      <img src="https://placehold.co/600x400/black/yellow?text={{ car_model.brand.name }}+{{ car_model.name }}+Black" alt="{{ car_model.brand.name }} {{ car_model.name }} черного цвета с желтыми фарами, ночной вид" class="w-full h-auto object-cover">
-    </div>
+      <!-- Дополнительные изображения -->
+      <div class="rounded-lg overflow-hidden">
+        <img id="gallery-image-1" src="https://placehold.co/600x400/black/yellow?text={{ car_model.brand.name }}+{{ car_model.name }}+Black" alt="Дополнительное изображение 1" class="w-full h-auto object-cover">
+      </div>
     
-    <div class="rounded-lg overflow-hidden">
-      <img src="https://placehold.co/600x400/white/gray?text={{ car_model.brand.name }}+{{ car_model.name }}+White" alt="{{ car_model.brand.name }} {{ car_model.name }} белого цвета, вид спереди, на мокрой дороге" class="w-full h-auto object-cover">
-    </div>
+      <div class="rounded-lg overflow-hidden">
+        <img id="gallery-image-2" src="https://placehold.co/600x400/white/gray?text={{ car_model.brand.name }}+{{ car_model.name }}+White" alt="Дополнительное изображение 2" class="w-full h-auto object-cover">
+      </div>
     
-    <div class="rounded-lg overflow-hidden">
-      <img src="https://placehold.co/600x400/silver/white?text={{ car_model.brand.name }}+{{ car_model.name }}+Silver" alt="{{ car_model.brand.name }} {{ car_model.name }} серебристого цвета, вид сзади" class="w-full h-auto object-cover">
-    </div>
+      <div class="rounded-lg overflow-hidden">
+        <img id="gallery-image-3" src="https://placehold.co/600x400/silver/white?text={{ car_model.brand.name }}+{{ car_model.name }}+Silver" alt="Дополнительное изображение 3" class="w-full h-auto object-cover">
+      </div>
     
-    <!-- Изображение интерьера -->
-    <div class="rounded-lg overflow-hidden col-span-2 md:col-span-1">
-      <img src="https://placehold.co/600x400/gray/white?text={{ car_model.brand.name }}+{{ car_model.name }}+Interior" alt="Интерьер {{ car_model.brand.name }} {{ car_model.name }}, вид на приборную панель и руль" class="w-full h-auto object-cover">
+      <!-- Изображение интерьера -->
+      <div class="rounded-lg overflow-hidden col-span-2 md:col-span-1">
+        <img id="gallery-image-4" src="https://placehold.co/600x400/gray/white?text={{ car_model.brand.name }}+{{ car_model.name }}+Interior" alt="Интерьер" class="w-full h-auto object-cover">
+      </div>
     </div>
-  </div>
 
-  <!-- Раздел "Доступно сейчас" -->
-  <div class="mb-10">
-    <h2 class="text-2xl font-bold text-gray-900 mb-6">{% if equipments %}Доступные комплектации{% else %}Комплектации{% endif %}</h2>
-    <div class="flex flex-wrap gap-4">
-      {% for equipment in equipments %}
-      <button class="{% if forloop.first %}model-btn-active{% else %}px-6 py-3 border border-gray-300 hover:bg-gray-50{% endif %} px-6 py-3 border rounded-md text-sm font-medium">
-        {{ car_model.brand.name }} {{ car_model.name }} {{ equipment.name }}
-      </button>
-      {% empty %}
-      <button class="model-btn-active px-6 py-3 border rounded-md text-sm font-medium">
-        {{ car_model.brand.name }} {{ car_model.name }} Classic
-      </button>
-      <button class="px-6 py-3 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50">
-        {{ car_model.brand.name }} {{ car_model.name }} Lux
-      </button>
-      {% endfor %}
-    </div>
-  </div>
+    <!-- Раздел "Доступные комплектации" -->
+    <div class="mb-10">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Доступные комплектации</h2>
+      <div class="flex flex-wrap gap-4 mb-6" id="equipment-buttons">
+        {% for equipment in equipments %}
+        <button 
+          class="equipment-btn px-6 py-3 border rounded-md text-sm font-medium transition-colors duration-200 {% if forloop.first %}bg-blue-600 text-white border-blue-600{% else %}border-gray-300 hover:bg-gray-50 text-gray-700{% endif %}" 
+          data-equipment-id="{{ equipment.id }}">
+          {{ equipment.name }}
+        </button>
+        {% empty %}
+        <button class="equipment-btn bg-blue-600 text-white px-6 py-3 border border-blue-600 rounded-md text-sm font-medium">
+          {{ car_model.brand.name }} {{ car_model.name }} Classic
+        </button>
+        {% endfor %}
+      </div>
 
-  <!-- Кнопка заказа и текст -->
-  <div class="mt-8">
-    <a href="{% url 'autosalon:services' %}">
-    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-4 px-6 rounded-md mb-4 transition duration-300">
-        Заказать онлайн
-    </button>
-  </a>
-    <p class="text-gray-500 text-sm text-center">
-      Заказать онлайн или посетить наш салон для оформления заказа
-    </p>
-  </div>
+      <!-- Информация о выбранной комплектации в разделе обзора -->
+      <div id="equipment-info" class="bg-gray-50 rounded-lg p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="text-xl font-bold mb-4" id="equipment-name">
+              {% if equipments %}{{ equipments.0.name }}{% else %}Базовая комплектация{% endif %}
+            </h3>
+            <p class="text-gray-600 mb-4" id="equipment-description">
+              {% if equipments %}{{ equipments.0.description }}{% else %}Стандартная комплектация с базовым набором опций{% endif %}
+            </p>
+            <div class="text-2xl font-bold text-blue-600 mb-4" id="equipment-price">
+              {% if equipments %}{{ equipments.0.price|floatformat:0 }} ₽{% else %}{{ car_model.base_price|floatformat:0 }} ₽{% endif %}
+            </div>
+          
+            <!-- Кнопка для перехода к спецификациям -->
+            <button onclick="switchTab('specs')" class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium transition-colors">
+              <span class="icon-[tabler--list-details] size-5"></span>
+              Подробные характеристики
+            </button>
+          </div>
+        
+          <div id="equipment-features">
+            <!-- Краткая информация о функциях комплектации -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Кнопка заказа и текст -->
+    <div class="mt-8">
+      <a href="{% url 'service:service_center' %}">
+        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-4 px-6 rounded-md mb-4 transition duration-300">
+          Заказать онлайн
+        </button>
+      </a>
+      <p class="text-gray-500 text-sm text-center">
+        Заказать онлайн или посетить наш салон для оформления заказа
+      </p>
+    </div>
 </div>
 
 </div>
 
 <div id="specs-content" class="tab-content hidden">
-  <div class="bg-base-100 rounded-xl shadow-md p-8">
-    <h2 class="text-2xl font-bold text-primary mb-6">Технические характеристики</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
-      <!-- Двигатель и трансмиссия -->
-      <div>
-        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
-          <span class="icon-[tabler--engine] size-6 text-accent"></span>
-          Двигатель и трансмиссия
-        </h3>
-        <table class="w-full">
-          <tbody>
-            <tr class="border-b border-base-300">
-              <td class="py-3 text-base-content/70">Тип двигателя</td>
-              <td class="py-3 font-medium text-right">{{ car_model.get_fuel_type_display }}</td>
-            </tr>
-            <tr class="border-b border-base-300">
-              <td class="py-3 text-base-content/70">Объем двигателя</td>
-              <td class="py-3 font-medium text-right">{{ car_model.engine_volume }} л</td>
-            </tr>
-            <tr class="border-b border-base-300">
-              <td class="py-3 text-base-content/70">Мощность</td>
-              <td class="py-3 font-medium text-right">{{ car_model.power }} л.с.</td>
-            </tr>
-            <tr class="border-b border-base-300">
-              <td class="py-3 text-base-content/70">Крутящий момент</td>
-              <td class="py-3 font-medium text-right">170 Нм при 3700 об/мин</td>
-            </tr>
-            <tr>
-              <td class="py-3 text-base-content/70">Коробка передач</td>
-              <td class="py-3 font-medium text-right">{{ car_model.get_transmission_display }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="bg-base-100 rounded-xl shadow-md p-8">
+      <h2 class="text-2xl font-bold text-primary mb-6">Технические характеристики</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-x-12 gap-y-8">
       
-      <!-- Динамические характеристики -->
-      <div>
-        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
-          <span class="icon-[tabler--speedboat] size-6 text-accent"></span>
-          Динамические характеристики
-        </h3>
-        <table class="w-full">
-          <tbody>
-            <tr class="border-b border-base-300">
-              <td class="py-3 text-base-content/70">Максимальная скорость</td>
-              <td class="py-3 font-medium text-right">{{ car_model.max_speed|default:"180" }} км/ч</td>
-            </tr>
-            <tr class="border-b border-base-300">
-              <td class="py-3 text-base-content/70">Разгон до 100 км/ч</td>
-              <td class="py-3 font-medium text-right">{{ car_model.acceleration|default:"11.2" }} с</td>
-            </tr>
-            <tr class="border-b border-base-300">
-              <td class="py-3 text-base-content/70">Расход топлива (город)</td>
-              <td class="py-3 font-medium text-right">{{ car_model.fuel_consumption_city|default:"9.2" }} л/100 км</td>
-            </tr>
-            <tr class="border-b border-base-300">
-              <td class="py-3 text-base-content/70">Расход топлива (трасса)</td>
-              <td class="py-3 font-medium text-right">{{ car_model.fuel_consumption_highway|default:"5.9" }} л/100 км</td>
-            </tr>
-            <tr>
-              <td class="py-3 text-base-content/70">Расход топлива (смешанный)</td>
-              <td class="py-3 font-medium text-right">{{ car_model.fuel_consumption|default:"7.2" }} л/100 км</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+        <!-- Левая колонка - Двигатель и трансмиссия -->
+        <div>
+          <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <span class="icon-[tabler--engine] size-6 text-accent"></span>
+            Двигатель и трансмиссия
+          </h3>
+          <table class="w-full">
+            <tbody>
+              <tr class="border-b border-base-300">
+                <td class="py-3 text-base-content/70">Тип двигателя</td>
+                <td class="py-3 font-medium text-right">{{ car_model.get_fuel_type_display }}</td>
+              </tr>
+              <tr class="border-b border-base-300">
+                <td class="py-3 text-base-content/70">Объем двигателя</td>
+                <td class="py-3 font-medium text-right">{{ car_model.engine_volume }} л</td>
+              </tr>
+              <tr class="border-b border-base-300">
+                <td class="py-3 text-base-content/70">Мощность</td>
+                <td class="py-3 font-medium text-right" id="spec-power">{{ car_model.power }} л.с.</td>
+              </tr>
+              <tr class="border-b border-base-300">
+                <td class="py-3 text-base-content/70">Крутящий момент</td>
+                <td class="py-3 font-medium text-right">170 Нм при 3700 об/мин</td>
+              </tr>
+              <tr>
+                <td class="py-3 text-base-content/70">Коробка передач</td>
+                <td class="py-3 font-medium text-right">{{ car_model.get_transmission_display }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Динамические характеристики -->
+          <h3 class="text-xl font-bold mb-4 mt-8 flex items-center gap-2">
+            <span class="icon-[tabler--speedboat] size-6 text-accent"></span>
+            Динамические характеристики
+          </h3>
+          <table class="w-full">
+            <tbody>
+              <tr class="border-b border-base-300">
+                <td class="py-3 text-base-content/70">Максимальная скорость</td>
+                <td class="py-3 font-medium text-right" id="spec-max-speed">{{ car_model.max_speed|default:"180" }} км/ч</td>
+              </tr>
+              <tr class="border-b border-base-300">
+                <td class="py-3 text-base-content/70">Разгон до 100 км/ч</td>
+                <td class="py-3 font-medium text-right" id="spec-acceleration">{{ car_model.acceleration|default:"11.2" }} с</td>
+              </tr>
+              <tr class="border-b border-base-300">
+                <td class="py-3 text-base-content/70">Расход топлива (город)</td>
+                <td class="py-3 font-medium text-right" id="spec-fuel-city">{{ car_model.fuel_consumption_city|default:"9.2" }} л/100 км</td>
+              </tr>
+              <tr class="border-b border-base-300">
+                <td class="py-3 text-base-content/70">Расход топлива (трасса)</td>
+                <td class="py-3 font-medium text-right" id="spec-fuel-highway">{{ car_model.fuel_consumption_highway|default:"5.9" }} л/100 км</td>
+              </tr>
+              <tr>
+                <td class="py-3 text-base-content/70">Расход топлива (смешанный)</td>
+                <td class="py-3 font-medium text-right" id="spec-fuel-mixed">{{ car_model.fuel_consumption|default:"7.2" }} л/100 км</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       
-      <div>
-        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
-          <span class="icon-[tabler--ruler-2] size-6 text-accent"></span>
-          Размеры и масса
-        </h3>
-        <table class="w-full">
-          <tbody>
-            <tr class="border-b border-base-300">
-              <td class="py-3 text-base-content/70">Длина</td>
-              <td class="py-3 font-medium text-right">{{ car_model.length|default:"4410" }} мм</td>
-            </tr>
-            <tr class="border-b border-base-300">
-              <td class="py-3 text-base-content/70">Ширина</td>
-              <td class="py-3 font-medium text-right">{{ car_model.width|default:"1764" }} мм</td>
-            </tr>
-            <tr class="border-b border-base-300">
-              <td class="py-3 text-base-content/70">Высота</td>
-              <td class="py-3 font-medium text-right">{{ car_model.height|default:"1497" }} мм</td>
-            </tr>
-            <tr class="border-b border-base-300">
-              <td class="py-3 text-base-content/70">Колесная база</td>
-              <td class="py-3 font-medium text-right">{{ car_model.wheelbase|default:"2635" }} мм</td>
-            </tr>
-            <tr>
-              <td class="py-3 text-base-content/70">Дорожный просвет</td>
-              <td class="py-3 font-medium text-right">{{ car_model.ground_clearance|default:"178" }} мм</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+        <!-- Средняя колонка - Размеры и базовый комфорт -->
+        <div>
+          <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <span class="text-2xl">📏</span>
+            Размеры и масса
+          </h3>
+          <table class="w-full">
+            <tbody>
+              <tr class="border-b border-base-300">
+                <td class="py-3 text-base-content/70">Длина</td>
+                <td class="py-3 font-medium text-right">{{ car_model.length|default:"4410" }} мм</td>
+              </tr>
+              <tr class="border-b border-base-300">
+                <td class="py-3 text-base-content/70">Ширина</td>
+                <td class="py-3 font-medium text-right">{{ car_model.width|default:"1764" }} мм</td>
+              </tr>
+              <tr class="border-b border-base-300">
+                <td class="py-3 text-base-content/70">Высота</td>
+                <td class="py-3 font-medium text-right">{{ car_model.height|default:"1497" }} мм</td>
+              </tr>
+              <tr class="border-b border-base-300">
+                <td class="py-3 text-base-content/70">Колесная база</td>
+                <td class="py-3 font-medium text-right">{{ car_model.wheelbase|default:"2635" }} мм</td>
+              </tr>
+              <tr class="border-b border-base-300">
+                <td class="py-3 text-base-content/70">Дорожный просвет</td>
+                <td class="py-3 font-medium text-right">{{ car_model.clearance|default:"178" }} мм</td>
+              </tr>
+              <tr>
+                <td class="py-3 text-base-content/70">Объем багажника</td>
+                <td class="py-3 font-medium text-right">{{ car_model.trunk_volume|default:"480" }} л</td>
+              </tr>
+            </tbody>
+          </table>
 
-      <div>
-        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
-          <span class="icon-[tabler--armchair] size-6 text-accent"></span>
-          Комфорт и оборудование
-        </h3>
-        
-        <table class="w-full">
-          <tbody>
-            <tr class="border-b border-base-300">
-              <td class="py-3 text-base-content/70">Климат-контроль</td>
-              <td class="py-3 font-medium text-right">{{ car_model.has_climate_control|yesno:"Да,Нет" }}</td>
-            </tr>
-            <tr class="border-b border-base-300">
-              <td class="py-3 text-base-content/70">Мультимедийная система</td>
-              <td class="py-3 font-medium text-right">{{ car_model.multimedia_system|default:"Отсутствует" }}</td>
-            </tr>
-            <tr class="border-b border-base-300">
-              <td class="py-3 text-base-content/70">Подогрев сидений</td>
-              <td class="py-3 font-medium text-right">{{ car_model.seat_heating|default:"Отсутствует" }}</td>
-            </tr>
-            <tr class="border-b border-base-300">
-              <td class="py-3 text-base-content/70">Подогрев руля</td>
-              <td class="py-3 font-medium text-right">{{ car_model.has_heated_steering_wheel|yesno:"Да,Нет" }}</td>
-            </tr>
-            <tr>
-              <td class="py-3 text-base-content/70">Объем багажника</td>
-              <td class="py-3 font-medium text-right">{{ car_model.trunk_volume|default:"480" }} л</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+          <!-- Базовое оборудование -->
+          <h3 class="text-xl font-bold mb-4 mt-8 flex items-center gap-2">
+            <span class="text-2xl">🛋️</span>
+            Базовое оборудование
+          </h3>
+          <table class="w-full" id="base-equipment-table">
+            <tbody>
+              <tr class="border-b border-base-300">
+                <td class="py-3 text-base-content/70">Климат-контроль</td>
+                <td class="py-3 font-medium text-right" id="spec-climate-control">
+                  {% if equipments %}{{ equipments.0.has_climate_control|yesno:"Да,Нет" }}{% else %}Да{% endif %}
+                </td>
+              </tr>
+              <tr class="border-b border-base-300">
+                <td class="py-3 text-base-content/70">Мультимедийная система</td>
+                <td class="py-3 font-medium text-right" id="spec-multimedia">
+                  {% if equipments %}{{ equipments.0.multimedia_system|default:"Отсутствует" }}{% else %}Базовая{% endif %}
+                </td>
+              </tr>
+              <tr class="border-b border-base-300">
+                <td class="py-3 text-base-content/70">Подогрев сидений</td>
+                <td class="py-3 font-medium text-right" id="spec-seat-heating">
+                  {% if equipments %}{{ equipments.0.seat_heating|default:"Отсутствует" }}{% else %}Передние{% endif %}
+                </td>
+              </tr>
+              <tr class="border-b border-base-300">
+                <td class="py-3 text-base-content/70">Подогрев руля</td>
+                <td class="py-3 font-medium text-right" id="spec-heated-wheel">
+                  {% if equipments %}{{ equipments.0.has_heated_steering_wheel|yesno:"Да,Нет" }}{% else %}Нет{% endif %}
+                </td>
+              </tr>
+              <tr class="border-b border-base-300">
+                <td class="py-3 text-base-content/70">Кожаные сиденья</td>
+                <td class="py-3 font-medium text-right" id="spec-leather-seats">
+                  {% if equipments %}{{ equipments.0.has_leather_seats|yesno:"Да,Нет" }}{% else %}Нет{% endif %}
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3 text-base-content/70">Размер дисков</td>
+                <td class="py-3 font-medium text-right" id="spec-wheel-size">
+                  {% if equipments %}{{ equipments.0.wheel_size|default:"R15" }}{% else %}R15{% endif %}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
+        <!-- Правая колонка - Дополнительное оборудование -->
+        <div>
+          <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <span class="text-2xl">⭐</span>
+            Дополнительное оборудование
+          </h3>
+          <div id="spec-equipment-features">
+            {% if equipments %}
+              <div class="space-y-3">
+                {% for feature in equipments.0.features.all %}
+                  {% if feature.is_included %}
+                    <div class="flex items-center gap-2">
+                      <span class="text-green-500">✓</span>
+                      <span class="text-sm">{{ feature.name }}</span>
+                    </div>
+                  {% endif %}
+                {% empty %}
+                  <div class="text-center py-8 text-gray-500">
+                    <span class="text-4xl mb-4 block">📋</span>
+                    <p class="text-lg font-medium mb-2">Базовая комплектация</p>
+                    <p class="text-sm">Включает стандартное оборудование модели</p>
+                  </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="text-center py-8 text-gray-500">
+                <span class="text-4xl mb-4 block">📋</span>
+                <p class="text-lg font-medium mb-2">Базовая комплектация</p>
+                <p class="text-sm">Включает стандартное оборудование модели</p>
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Дополнительные опции -->
+          <div class="mt-6 p-4 bg-gray-50 rounded-lg" id="additional-options">
+            <h4 class="font-bold mb-3 flex items-center gap-2">
+              <span class="text-lg">🔧</span>
+              Дополнительные опции
+            </h4>
+            <div class="space-y-2 text-sm" id="additional-options-list">
+              {% if equipments %}
+                <div class="flex items-center justify-between">
+                  <span>Люк</span>
+                  <span class="text-gray-500" id="spec-sunroof">{{ equipments.0.has_sunroof|yesno:"Да,Нет" }}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span>Навигация</span>
+                  <span class="text-gray-500" id="spec-navigation">{{ equipments.0.has_navigation|yesno:"Да,Нет" }}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span>Парктроники</span>
+                  <span class="text-gray-500" id="spec-parking-sensors">{{ equipments.0.has_parking_sensors|yesno:"Да,Нет" }}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span>Камера заднего вида</span>
+                  <span class="text-gray-500" id="spec-rear-camera">{{ equipments.0.has_rear_camera|yesno:"Да,Нет" }}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span>Круиз-контроль</span>
+                  <span class="text-gray-500" id="spec-cruise-control">{{ equipments.0.has_cruise_control|yesno:"Да,Нет" }}</span>
+                </div>
+              {% else %}
+                <div class="flex items-center justify-between">
+                  <span>Люк</span>
+                  <span class="text-gray-500">Нет</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span>Навигация</span>
+                  <span class="text-gray-500">Нет</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span>Парктроники</span>
+                  <span class="text-gray-500">Нет</span>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
-  </div>
 </div>
 
 <div id="photos-content" class="tab-content hidden">
-  <!-- Содержимое вкладки "Фотографии" -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-    <!-- Основное фото -->
-    {% if car_model.image %}
-    <div class="aspect-[4/3] rounded-xl overflow-hidden shadow-md cursor-pointer" onclick="openImageModal('{{ car_model.image.url }}', '{{ car_model }}')">
-      <img src="{{ car_model.image.url }}" alt="{{ car_model }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
-    </div>
-    {% endif %}
+    <!-- Содержимое вкладки "Фотографии" -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="photos-gallery">
+      <!-- Основное фото -->
+      {% if car_model.image %}
+      <div class="aspect-[4/3] rounded-xl overflow-hidden shadow-md cursor-pointer" onclick="openImageModal('{{ car_model.image.url }}', '{{ car_model }}')">
+        <img src="{{ car_model.image.url }}" alt="{{ car_model }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+      </div>
+      {% endif %}
     
-    <!-- Дополнительные фото (заглушки) -->
-    <div class="aspect-[4/3] rounded-xl overflow-hidden shadow-md cursor-pointer" onclick="openImageModal('/static/img/car-interior.jpg', '{{ car_model }} - интерьер')">
-      <img src="/static/img/car-interior.jpg" alt="{{ car_model }} - интерьер" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
-    </div>
+      <!-- Дополнительные фото (заглушки) -->
+      <div class="aspect-[4/3] rounded-xl overflow-hidden shadow-md cursor-pointer" onclick="openImageModal('https://placehold.co/800x600/black/yellow?text={{ car_model.brand.name }}+{{ car_model.name }}+Night', '{{ car_model }} - ночной вид')">
+        <img src="https://placehold.co/800x600/black/yellow?text={{ car_model.brand.name }}+{{ car_model.name }}+Night" alt="{{ car_model }} - ночной вид" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+      </div>
     
-    <div class="aspect-[4/3] rounded-xl overflow-hidden shadow-md cursor-pointer" onclick="openImageModal('/static/img/car-rear.jpg', '{{ car_model }} - вид сзади')">
-      <img src="/static/img/car-rear.jpg" alt="{{ car_model }} - вид сзади" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+      <div class="aspect-[4/3] rounded-xl overflow-hidden shadow-md cursor-pointer" onclick="openImageModal('https://placehold.co/800x600/white/gray?text={{ car_model.brand.name }}+{{ car_model.name }}+Day', '{{ car_model }} - дневной вид')">
+        <img src="https://placehold.co/800x600/white/gray?text={{ car_model.brand.name }}+{{ car_model.name }}+Day" alt="{{ car_model }} - дневной вид" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+      </div>
+    
+      <div class="aspect-[4/3] rounded-xl overflow-hidden shadow-md cursor-pointer" onclick="openImageModal('https://placehold.co/800x600/silver/black?text={{ car_model.brand.name }}+{{ car_model.name }}+Side', '{{ car_model }} - вид сбоку')">
+        <img src="https://placehold.co/800x600/silver/black?text={{ car_model.brand.name }}+{{ car_model.name }}+Side" alt="{{ car_model }} - вид сбоку" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+      </div>
+    
+      <div class="aspect-[4/3] rounded-xl overflow-hidden shadow-md cursor-pointer" onclick="openImageModal('https://placehold.co/800x600/gray/white?text={{ car_model.brand.name }}+{{ car_model.name }}+Interior', '{{ car_model }} - интерьер')">
+        <img src="https://placehold.co/800x600/gray/white?text={{ car_model.brand.name }}+{{ car_model.name }}+Interior" alt="{{ car_model }} - интерьер" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+      </div>
     </div>
-  </div>
+</div>
+
+<!-- Модальное окно для просмотра изображений -->
+<div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden flex items-center justify-center p-4">
+    <div class="relative max-w-4xl max-h-full">
+      <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white text-2xl hover:text-gray-300 z-10">
+        ✕
+      </button>
+      <img id="modalImage" src="" alt="" class="max-w-full max-h-full object-contain">
+      <div class="absolute bottom-4 left-4 right-4 text-white text-center">
+        <p id="modalImageTitle" class="text-lg font-medium"></p>
+      </div>
+    </div>
+</div>
+
 </div>
 </div>
 
-
-
+<!-- Передаем данные комплектаций в JavaScript -->
 <script>
+    // Данные комплектаций из Django
+    const equipmentsData = {{ equipments_json|safe }};
+    const carModel = {
+        brand: "{{ car_model.brand.name }}",
+        name: "{{ car_model.name }}",
+        basePower: {{ car_model.power }},
+        baseMaxSpeed: {{ car_model.max_speed|default:"180" }},
+        baseAcceleration: {{ car_model.acceleration|default:"11.2" }},
+        baseFuelConsumption: {{ car_model.fuel_consumption|default:"7.5" }}
+    };
+
     // Функция для переключения между вкладками
     function switchTab(tab) {
-      // Скрываем все содержимое вкладок
-      document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.add('hidden');
-      });
+        // Скрываем все содержимое вкладок
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.add('hidden');
+        });
       
-      // Убираем активный класс со всех вкладок
-      document.querySelectorAll('.tab').forEach(tabEl => {
-        tabEl.classList.remove('tab-active');
-      });
+        // Убираем активный класс со всех вкладок
+        document.querySelectorAll('.tab').forEach(tabEl => {
+            tabEl.classList.remove('tab-active');
+        });
       
-      // Показываем выбранную вкладку и делаем ее активной
-      document.getElementById(tab + '-content').classList.remove('hidden');
-      document.getElementById(tab + '-tab').classList.add('tab-active');
+        // Показываем выбранную вкладку и делаем ее активной
+        const contentElement = document.getElementById(tab + '-content');
+        const tabElement = document.getElementById(tab + '-tab');
+      
+        if (contentElement) contentElement.classList.remove('hidden');
+        if (tabElement) tabElement.classList.add('tab-active');
     }
-    
-  
-  </script>
 
+    // Функции для работы с изображениями
+    function openImageModal(imageSrc, title) {
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const modalTitle = document.getElementById('modalImageTitle');
+      
+        if (modal && modalImage && modalTitle) {
+            modalImage.src = imageSrc;
+            modalTitle.textContent = title;
+            modal.classList.remove('hidden');
+        }
+    }
+
+    function closeImageModal() {
+        const modal = document.getElementById('imageModal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+
+    // Функция для обновления изображений в галерее
+    function updatePhotosGallery(equipment) {
+        const gallery = document.getElementById('photos-gallery');
+        if (!gallery) return;
+
+        let imagesHtml = '';
+      
+        // Основное изображение
+        if (equipment.images && equipment.images.main) {
+            imagesHtml += `
+                <div class="aspect-[4/3] rounded-xl overflow-hidden shadow-md cursor-pointer" onclick="openImageModal('${equipment.images.main}', '${carModel.brand} ${carModel.name} ${equipment.name}')">
+                    <img src="${equipment.images.main}" alt="${carModel.brand} ${carModel.name} ${equipment.name}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                </div>
+            `;
+        }
+      
+        // Дополнительные изображения
+        if (equipment.images && equipment.images.gallery && equipment.images.gallery.length > 0) {
+            equipment.images.gallery.forEach((imageSrc, index) => {
+                const imageTypes = ['ночной вид', 'дневной вид', 'вид сбоку', 'интерьер'];
+                const imageType = imageTypes[index] || `вид ${index + 1}`;
+              
+                imagesHtml += `
+                    <div class="aspect-[4/3] rounded-xl overflow-hidden shadow-md cursor-pointer" onclick="openImageModal('${imageSrc}', '${carModel.brand} ${carModel.name} ${equipment.name} - ${imageType}')">
+                        <img src="${imageSrc}" alt="${carModel.brand} ${carModel.name} ${equipment.name} - ${imageType}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                    </div>
+                `;
+            });
+        } else {
+            // Заглушки если нет дополнительных изображений
+            const placeholderImages = [
+                { color: 'black/yellow', text: 'Night', alt: 'ночной вид' },
+                { color: 'white/gray', text: 'Day', alt: 'дневной вид' },
+                { color: 'silver/black', text: 'Side', alt: 'вид сбоку' },
+                { color: 'gray/white', text: 'Interior', alt: 'интерьер' }
+            ];
+            
+            placeholderImages.forEach(img => {
+                const placeholderUrl = `https://placehold.co/800x600/${img.color}?text=${carModel.brand}+${carModel.name}+${img.text}`;
+                imagesHtml += `
+                    <div class="aspect-[4/3] rounded-xl overflow-hidden shadow-md cursor-pointer" onclick="openImageModal('${placeholderUrl}', '${carModel.brand} ${carModel.name} - ${img.alt}')">
+                        <img src="${placeholderUrl}" alt="${carModel.brand} ${carModel.name} - ${img.alt}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                    </div>
+                `;
+            });
+        }
+      
+        gallery.innerHTML = imagesHtml;
+    }
+
+    // Функция для обновления технических характеристик
+    function updateSpecifications(equipment) {
+        // Обновляем мощность
+        const powerElement = document.getElementById('spec-power');
+        if (powerElement && equipment.specs) {
+            powerElement.textContent = `${equipment.specs.power} л.с.`;
+        }
+
+        // Обновляем максимальную скорость
+        const maxSpeedElement = document.getElementById('spec-max-speed');
+        if (maxSpeedElement && equipment.specs) {
+            maxSpeedElement.textContent = `${equipment.specs.max_speed} км/ч`;
+        }
+
+        // Обновляем разгон
+        const accelerationElement = document.getElementById('spec-acceleration');
+        if (accelerationElement && equipment.specs) {
+            accelerationElement.textContent = `${equipment.specs.acceleration} с`;
+        }
+
+        // Обновляем расход топлива
+        const fuelElement = document.getElementById('spec-fuel-mixed');
+        if (fuelElement && equipment.specs) {
+            fuelElement.textContent = `${equipment.specs.fuel_consumption} л/100 км`;
+        }
+
+        // Обновляем расход в городе
+        const fuelCityElement = document.getElementById('spec-fuel-city');
+        if (fuelCityElement && equipment.specs) {
+            const cityConsumption = (equipment.specs.fuel_consumption * 1.3).toFixed(1);
+            fuelCityElement.textContent = `${cityConsumption} л/100 км`;
+        }
+
+        // Обновляем расход на трассе
+        const fuelHighwayElement = document.getElementById('spec-fuel-highway');
+        if (fuelHighwayElement && equipment.specs) {
+            const highwayConsumption = (equipment.specs.fuel_consumption * 0.8).toFixed(1);
+            fuelHighwayElement.textContent = `${highwayConsumption} л/100 км`;
+        }
+    }
+
+    // Функция для обновления базового оборудования
+    function updateBaseEquipment(equipment) {
+        if (!equipment.base_equipment) return;
+
+        const baseEquip = equipment.base_equipment;
+
+        // Климат-контроль
+        const climateElement = document.getElementById('spec-climate-control');
+        if (climateElement) {
+            climateElement.textContent = baseEquip.climate_control ? 'Да' : 'Нет';
+        }
+
+        // Мультимедийная система
+        const multimediaElement = document.getElementById('spec-multimedia');
+        if (multimediaElement) {
+            multimediaElement.textContent = baseEquip.multimedia_system || 'Отсутствует';
+        }
+
+        // Подогрев сидений
+        const seatHeatingElement = document.getElementById('spec-seat-heating');
+        if (seatHeatingElement) {
+            seatHeatingElement.textContent = baseEquip.seat_heating || 'Отсутствует';
+        }
+
+        // Подогрев руля
+        const heatedWheelElement = document.getElementById('spec-heated-wheel');
+        if (heatedWheelElement) {
+            heatedWheelElement.textContent = baseEquip.heated_steering_wheel ? 'Да' : 'Нет';
+        }
+
+        // Кожаные сиденья
+        const leatherSeatsElement = document.getElementById('spec-leather-seats');
+        if (leatherSeatsElement) {
+            leatherSeatsElement.textContent = baseEquip.leather_seats ? 'Да' : 'Нет';
+        }
+
+        // Размер дисков
+        const wheelSizeElement = document.getElementById('spec-wheel-size');
+        if (wheelSizeElement) {
+            wheelSizeElement.textContent = baseEquip.wheel_size || 'R15';
+        }
+
+        // Дополнительные опции
+        const sunroofElement = document.getElementById('spec-sunroof');
+        if (sunroofElement) {
+            sunroofElement.textContent = baseEquip.sunroof ? 'Да' : 'Нет';
+        }
+
+        const navigationElement = document.getElementById('spec-navigation');
+        if (navigationElement) {
+            navigationElement.textContent = baseEquip.navigation ? 'Да' : 'Нет';
+        }
+
+        const parkingSensorsElement = document.getElementById('spec-parking-sensors');
+        if (parkingSensorsElement) {
+            parkingSensorsElement.textContent = baseEquip.parking_sensors ? 'Да' : 'Нет';
+        }
+
+        const rearCameraElement = document.getElementById('spec-rear-camera');
+        if (rearCameraElement) {
+            rearCameraElement.textContent = baseEquip.rear_camera ? 'Да' : 'Нет';
+        }
+
+        const cruiseControlElement = document.getElementById('spec-cruise-control');
+        if (cruiseControlElement) {
+            cruiseControlElement.textContent = baseEquip.cruise_control ? 'Да' : 'Нет';
+        }
+    }
+
+    // Функция для обновления дополнительных функций комплектации
+    function updateEquipmentFeatures(equipment) {
+        const featuresContainer = document.getElementById('spec-equipment-features');
+        if (!featuresContainer) return;
+
+        let featuresHtml = '';
+        
+        // Проверяем, есть ли функции
+        const hasFeatures = equipment.features && Object.keys(equipment.features).length > 0;
+        
+        if (hasFeatures) {
+            featuresHtml = '<div class="space-y-4">';
+            
+            // Группируем функции по категориям
+            const categoryNames = {
+                'safety': 'Безопасность',
+                'comfort': 'Комфорт',
+                'multimedia': 'Мультимедиа',
+                'exterior': 'Экстерьер',
+                'interior': 'Интерьер',
+                'other': 'Другое'
+            };
+
+            Object.entries(equipment.features).forEach(([category, features]) => {
+                if (features && features.length > 0) {
+                    const categoryName = categoryNames[category] || category;
+                    featuresHtml += `
+                        <div class="mb-4">
+                            <h5 class="font-semibold text-sm text-gray-700 mb-2 flex items-center gap-2">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                                ${categoryName}
+                            </h5>
+                            <div class="space-y-1 ml-4">
+                    `;
+                    
+                    features.forEach(feature => {
+                        featuresHtml += `
+                            <div class="flex items-center gap-2">
+                                <span class="text-green-500 text-sm">✓</span>
+                                <span class="text-sm text-gray-600">${feature}</span>
+                            </div>
+                        `;
+                    });
+                    
+                    featuresHtml += '</div></div>';
+                }
+            });
+            
+            featuresHtml += '</div>';
+        } else {
+            // Если нет дополнительных функций
+            featuresHtml = `
+                <div class="text-center py-8 text-gray-500">
+                    <span class="text-4xl mb-4 block">📋</span>
+                    <p class="text-lg font-medium mb-2">Базовая комплектация</p>
+                    <p class="text-sm">Включает стандартное оборудование модели</p>
+                </div>
+            `;
+        }
+        
+        featuresContainer.innerHTML = featuresHtml;
+    }
+
+    // Функция для выбора комплектации
+    function selectEquipment(equipmentId) {
+        // Находим данные выбранной комплектации
+        const equipment = equipmentsData.find(eq => eq.id === equipmentId);
+        if (!equipment) return;
+
+        // Обновляем активную кнопку
+        document.querySelectorAll('.equipment-btn').forEach(btn => {
+            btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+            btn.classList.add('border-gray-300', 'hover:bg-gray-50', 'text-gray-700');
+        });
+
+        const activeBtn = document.querySelector(`[data-equipment-id="${equipmentId}"]`);
+        if (activeBtn) {
+            activeBtn.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+            activeBtn.classList.remove('border-gray-300', 'hover:bg-gray-50', 'text-gray-700');
+        }
+
+        // Обновляем информацию о комплектации
+        const nameElement = document.getElementById('equipment-name');
+        if (nameElement) {
+            nameElement.textContent = equipment.name;
+        }
+
+        const descriptionElement = document.getElementById('equipment-description');
+        if (descriptionElement) {
+            descriptionElement.textContent = equipment.description;
+        }
+
+        const priceElement = document.getElementById('equipment-price');
+        if (priceElement) {
+            const formattedPrice = parseFloat(equipment.price).toLocaleString('ru-RU');
+            priceElement.textContent = `${formattedPrice} ₽`;
+        }
+
+        // Обновляем технические характеристики
+        updateSpecifications(equipment);
+
+        // Обновляем базовое оборудование
+        updateBaseEquipment(equipment);
+
+        // Обновляем дополнительные функции
+        updateEquipmentFeatures(equipment);
+
+        // Обновляем галерею изображений
+        updatePhotosGallery(equipment);
+
+        // Обновляем заголовок страницы
+        const titleElement = document.getElementById('car-title');
+        if (titleElement) {
+            titleElement.textContent = `${carModel.brand} ${carModel.name} ${equipment.name}`;
+        }
+    }
+
+    // Инициализация при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        // Добавляем обработчики событий для кнопок комплектаций
+        document.querySelectorAll('.equipment-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const equipmentId = parseInt(this.getAttribute('data-equipment-id'));
+                if (equipmentId) {
+                    selectEquipment(equipmentId);
+                }
+            });
+        });
+
+        // Если есть комплектации, выбираем первую по умолчанию
+        if (equipmentsData && equipmentsData.length > 0) {
+            selectEquipment(equipmentsData[0].id);
+        }
+
+        // Закрытие модального окна по клику вне изображения
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeImageModal();
+            }
+        });
+
+        // Закрытие модального окна по нажатию Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeImageModal();
+            }
+        });
+    });
+</script>
 
 {% endblock %}
